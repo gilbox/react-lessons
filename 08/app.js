@@ -1,26 +1,47 @@
-// 06: Introduce Flux, but don't make it do anything useful yet
-//      - appStore
-//      - actionCreator w/submitComment method
-//      - appStore 'submit:comment' handler
+// 08: Partially Refactor App to use Morearty
+//      - Create Morearty Context
+//      - Add some initial dummy data to comments
+//      - add mixins: [Morearty.Mixin] to components
+//      - ctx.bootstrap()
+//      - but now we can't add comments
+//
+// Immutable Playground:
+// http://jsbin.com/tahire/1/edit?js,console,output
 
 var ENTER_KEY = 13;
 
 var dispatcher = new simflux.Dispatcher();
 
-var appStore = dispatcher.registerStore({
-  storeName: 'appStore',
-  comments: [],
-  'submit:comment': function (payload) {
-    console.log("submit:comment", payload);
+// appContext.js
+var ctx = Morearty.createContext({
+  initialState: {
+    comments: [
+      'Hello World',
+      'This is cool',
+      'F3P is 1337'
+    ]
   }
 });
 
+// appStore.js
+var appStore = dispatcher.registerStore({
+  storeName: 'appStore',
+  comments: [],
+
+  'submit:comment': function (payload) {
+    console.log("submit:comment", payload);
+    this.comments.push(payload.comment);
+  }
+});
+
+// actionCreator.js
 var actionCreator = dispatcher.registerActionCreator({
   submitComment: function (payload) {
     dispatcher.dispatch('submit:comment', payload);
   }
 });
 
+// components/InputWidget.js
 var InputWidget = React.createClass({
 
   handleMsgKeyDown: function (event) {
@@ -51,11 +72,13 @@ var InputWidget = React.createClass({
   }
 });
 
+// components/CommentList.js
 var CommentList = React.createClass({
+  mixins: [Morearty.Mixin],
   render: function () {
-    var comments = this.props.comments.map((comment, i) =>
+    var comments = this.getDefaultBinding().get().map((comment, i) =>
       <p key={i}>{comment}</p>
-    );
+    ).toArray();
 
     return (
       <div>
@@ -65,22 +88,17 @@ var CommentList = React.createClass({
   }
 });
 
+// components/App.js
 var App = React.createClass({
-  getInitialState: function () {
-    return {
-      comments: []
-    }
-  },
-
+  mixins: [Morearty.Mixin],
   handleSubmitComment: function (val) {
-    console.log("Add New Comment:",val);
-
-    this.setState({
-      comments: this.state.comments.concat([val])
-    });
+    actionCreator.submitComment({comment:val});
+    this.forceUpdate(); // @todo
   },
 
   render: function () {
+    var binding = this.getDefaultBinding();
+    console.log(binding);
 
     return (
       <div>
@@ -90,10 +108,11 @@ var App = React.createClass({
           onCommentSubmit={this.handleSubmitComment}
         />
 
-        <CommentList comments={this.state.comments} />
+        <CommentList binding={binding.sub('comments')} />
       </div>
     )
   }
 });
 
-React.render(<App />, document.getElementById('app'));
+var Bootstrap = ctx.bootstrap(App);
+React.render(<Bootstrap />, document.getElementById('app'));

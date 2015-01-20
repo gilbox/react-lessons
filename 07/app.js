@@ -1,4 +1,5 @@
 // 07: Refactor App to use Flux
+//      - handleSubmitComment refactor
 
 var ENTER_KEY = 13;
 

@@ -1,4 +1,4 @@
-// 02: Add and input element and some interactivity
+// 02: Add an input element and some interactivity
 
 var ENTER_KEY = 13;
 

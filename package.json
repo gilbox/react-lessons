@@ -17,7 +17,10 @@
   },
   "homepage": "https://github.com/gilbox/react-lessons",
   "dependencies": {
-    "react": "^0.12.2"
+    "immutable": "^3.5.0",
+    "morearty": "^0.7.7",
+    "react": "^0.12.2",
+    "simflux": "0.0.7"
   },
   "devDependencies": {
     "6to5ify": "^3.1.2",
