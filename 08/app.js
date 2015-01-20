@@ -3,6 +3,7 @@
 //      - Add some initial dummy data to comments
 //      - add mixins: [Morearty.Mixin] to components
 //      - ctx.bootstrap()
+//      - remove forceUpdate() in <App />
 //      - but now we can't add comments
 //
 // Immutable Playground:
@@ -93,7 +94,6 @@ var App = React.createClass({
   mixins: [Morearty.Mixin],
   handleSubmitComment: function (val) {
     actionCreator.submitComment({comment:val});
-    this.forceUpdate(); // @todo
   },
 
   render: function () {

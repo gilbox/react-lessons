@@ -90,7 +90,6 @@ var App = React.createClass({
   mixins: [Morearty.Mixin],
   handleSubmitComment: function (val) {
     actionCreator.submitComment({comment:val});
-    this.forceUpdate(); // @todo
   },
 
   render: function () {
