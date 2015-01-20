@@ -1,8 +1,8 @@
-// 02: Add and input element and some interactivity
+// 03: Create InputWidget and refactor
 
 var ENTER_KEY = 13;
 
-var App = React.createClass({
+var InputWidget = React.createClass({
 
   getInitialState: function () {
     return {
@@ -21,8 +21,8 @@ var App = React.createClass({
         console.log("Add New Comment:",val);
 
         this.setState({
-            comments: this.state.comments.concat([val])
-          });
+          comments: this.state.comments.concat([val])
+        });
 
         this.refs.inputMsg.getDOMNode().value = '';
       }
@@ -31,19 +31,29 @@ var App = React.createClass({
 
   render: function () {
     var comments = this.state.comments.map(comment =>
-      <p>{comment}</p>
+        <p>{comment}</p>
     );
-    
+
     return (
       <div>
-        <h1 className='Title'>Leave a comment</h1>
-
         <input
           ref="inputMsg"
           onKeyDown={this.handleMsgKeyDown}
           autoFocus={true}
         />
         {comments}
+      </div>
+    )
+  }
+});
+
+var App = React.createClass({
+  render: function () {
+    return (
+      <div>
+        <h1 className='Title'>Leave a comment</h1>
+
+        <InputWidget />
       </div>
     )
   }

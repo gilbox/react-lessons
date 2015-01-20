@@ -1,3 +1,5 @@
+// 01: Create App component
+
 var App = React.createClass({
   render: function () {
     return (
