@@ -53,7 +53,8 @@ gulp.task('watch', [
   makeWatchify('06'),
   makeWatchify('07'),
   makeWatchify('08'),
-  makeWatchify('09')
+  makeWatchify('09'),
+  makeWatchify('10')
 ], function () {
   browserSync.init(['./public/*.html','./public/*.css'],{
     notify:true,

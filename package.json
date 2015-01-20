@@ -20,7 +20,8 @@
     "immutable": "^3.5.0",
     "morearty": "^0.7.7",
     "react": "^0.12.2",
-    "simflux": "0.0.7"
+    "simflux": "0.0.7",
+    "superagent": "^0.21.0"
   },
   "devDependencies": {
     "6to5ify": "^3.1.2",

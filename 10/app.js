@@ -1,19 +1,20 @@
-// 09: Refactor App to use Morearty
-//      - fix adding comments
-//      - add appBinding var
-//      - fix appStore's 'submit:comment'
+// 10: Sentiment
+//      - Modify default Application Context to have sentiment {comment,sentiment}
+//      - Update CommentList component with comment and sentiment
+//      - actionCreator.submitComment w/superagent
+//      - appStore's 'submit:comment' concat with Immutable.fromJS
 
 var ENTER_KEY = 13;
 
 var dispatcher = new simflux.Dispatcher();
 
 // appContext.js
-var ctx = Morearty.createContext({
+var ctx = window.ctx = Morearty.createContext({
   initialState: {
     comments: [
-      'Hello World',
-      'This is cool',
-      'F3P is 1337'
+      { comment: 'Hello World', sentiment: 'Neutral'},
+      { comment: 'This is cool', sentiment: 'Positive'},
+      { comment: 'F3P is 1337', sentiment: 'Negative'}
     ]
   }
 });
@@ -27,14 +28,31 @@ var appStore = dispatcher.registerStore({
 
   'submit:comment': function (payload) {
     console.log("submit:comment", payload);
-    appBinding.update('comments', comments => comments.concat([payload.comment]));
+    appBinding.update('comments', comments => comments.concat([Immutable.fromJS(payload.comment)]));
   }
 });
 
 // actionCreator.js
 var actionCreator = dispatcher.registerActionCreator({
   submitComment: function (payload) {
-    dispatcher.dispatch('submit:comment', payload);
+
+    superagent
+      .post('https://community-sentiment.p.mashape.com/text/')
+      .send({ txt: payload.comment })
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('X-Mashape-Key', 'Yz98b1gzTXmsh9luAiHOjwSTzsg9p1HoSs5jsnvdttcO9CbMrY')
+      .set('Accept', 'application/json')
+      .end(function(error, res){
+        var result = res.body.result;
+        console.log("Sentiment: ", result);
+
+        dispatcher.dispatch('submit:comment', {
+          comment: {
+            comment: payload.comment,
+            sentiment: result.sentiment
+          }
+        });
+      });
   }
 });
 
@@ -74,7 +92,7 @@ var CommentList = React.createClass({
   mixins: [Morearty.Mixin],
   render: function () {
     var comments = this.getDefaultBinding().get().map((comment, i) =>
-      <p key={i}>{comment}</p>
+      <p key={i}>({comment.get('sentiment')}) {comment.get('comment')}</p>
     ).toArray();
 
     return (
