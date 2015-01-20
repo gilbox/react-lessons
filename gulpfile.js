@@ -48,7 +48,7 @@ gulp.task('watch', [
   makeWatchify('01'),
   makeWatchify('02'),
   makeWatchify('03'),
-  //makeWatchify('04'),
+  makeWatchify('04'),
   //makeWatchify('05'),
   //makeWatchify('06'),
   //makeWatchify('07'),
