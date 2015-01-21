@@ -51,7 +51,7 @@ var App = React.createClass({
   render: function () {
     return (
       <div>
-        <h1 className='Title'>Leave a comment</h1>
+        <h1 className='Title'>Comments</h1>
 
         <InputWidget />
       </div>

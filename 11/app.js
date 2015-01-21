@@ -1,44 +1,56 @@
-// 08: Partially Refactor App to use Morearty
-//      - Create Morearty Context
-//      - Add some initial dummy data to comments
-//      - add mixins: [Morearty.Mixin] to components
-//      - ctx.bootstrap()
-//      - remove forceUpdate() in <App />
-//      - but now we can't add comments
-//
-// Immutable Playground:
-// http://jsbin.com/tahire/1/edit?js,console,output
-
+// 11: Spruce things up a big
+//      - Add classes for styling
+//      - add placeholder
+//      - remove pre-filled comments
 var ENTER_KEY = 13;
 
 var dispatcher = new simflux.Dispatcher();
 
 // appContext.js
-var ctx = Morearty.createContext({
+var ctx = window.ctx = Morearty.createContext({
   initialState: {
     comments: [
-      'Hello World',
-      'This is cool',
-      'F3P is 1337'
+      //{ comment: 'Hello World', sentiment: 'Neutral'},
+      //{ comment: 'This is cool', sentiment: 'Positive'},
+      //{ comment: 'F3P is 1337', sentiment: 'Negative'}
     ]
   }
 });
 
+
 // appStore.js
+var appBinding = ctx.getBinding();
+
 var appStore = dispatcher.registerStore({
   storeName: 'appStore',
-  comments: [],
 
   'submit:comment': function (payload) {
     console.log("submit:comment", payload);
-    this.comments.push(payload.comment);
+    appBinding.update('comments', comments => comments.concat([Immutable.fromJS(payload.comment)]));
   }
 });
 
 // actionCreator.js
 var actionCreator = dispatcher.registerActionCreator({
   submitComment: function (payload) {
-    dispatcher.dispatch('submit:comment', payload);
+
+    superagent
+      .post('https://community-sentiment.p.mashape.com/text/')
+      .send({ txt: payload.comment })
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('X-Mashape-Key', 'Yz98b1gzTXmsh9luAiHOjwSTzsg9p1HoSs5jsnvdttcO9CbMrY')
+      .set('Accept', 'application/json')
+      .end(function(error, res){
+        var result = res.body.result;
+        console.log("Sentiment: ", result);
+
+        dispatcher.dispatch('submit:comment', {
+          comment: {
+            comment: payload.comment,
+            sentiment: result.sentiment
+          }
+        });
+      });
   }
 });
 
@@ -62,8 +74,10 @@ var InputWidget = React.createClass({
 
   render: function () {
     return (
-      <div>
+      <div className="InputMsg">
         <input
+          placeholder="What would you like to say?"
+          className="InputMsg-input"
           ref="inputMsg"
           onKeyDown={this.handleMsgKeyDown}
           autoFocus={true}
@@ -78,11 +92,11 @@ var CommentList = React.createClass({
   mixins: [Morearty.Mixin],
   render: function () {
     var comments = this.getDefaultBinding().get().map((comment, i) =>
-      <p key={i}>{comment}</p>
+      <p key={i} className={'CommentList-item is'+comment.get('sentiment')}> {comment.get('comment')}</p>
     ).toArray();
 
     return (
-      <div>
+      <div className="CommentList">
         {comments}
       </div>
     )
