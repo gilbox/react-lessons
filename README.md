@@ -1,5 +1,7 @@
 # react-lessons
-Simple to complex react concepts...
+Simple to complex react concepts... 
+
+![Screen Shot](react-lesson-ss.png)
 
 # Exploring this Repo
 
