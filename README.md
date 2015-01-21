@@ -1,5 +1,5 @@
 # react-lessons
-Simple to complex react concepts... 
+Simple to complex react concepts... Wherein we learn React by building a commenting system that automatically attaches emojis to each comment based on the comment's [sentiment](https://www.mashape.com/vivekn/sentiment-3). 
 
 ![Screen Shot](react-lesson-ss.png)
 
