@@ -9,7 +9,7 @@ Simple to complex react concepts... Wherein we learn React by building a comment
 - `npm install`
 - Then either `gulp watch`
 - Or `gulp watch01`, or `gulp watch02`, etc...
-- Navigate to [http://localhost:4444/](http://localhost:4444/)
+- Navigate to [http://localhost:4444/public](http://localhost:4444/public)
 
 
 # Topics Covered
