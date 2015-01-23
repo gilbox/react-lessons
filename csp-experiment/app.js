@@ -57,7 +57,7 @@ function channelComplete(channelName) {
 openChannel('channel');
 
 var actionCreator = dispatcher.registerActionCreator({
-  submitComment: function (payload) {
+  submitCommentChannel: function (payload) {
     superagent
       .post('https://community-sentiment.p.mashape.com/text/')
       .send({ txt: payload.comment })
