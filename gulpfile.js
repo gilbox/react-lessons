@@ -6,7 +6,9 @@ var gulp            = require('gulp'),
     buffer          = require('vinyl-buffer'),
     to5ify          = require('6to5ify'),
     util            = require('gulp-util'),
-    browserSync     = require('browser-sync');
+    browserSync     = require('browser-sync'),
+    fs              = require('fs'),
+    path            = require('path');
 
 var onError = function(err) {
   util.beep();
@@ -38,25 +40,19 @@ function makeWatchify(subdir) {
     return rebundle();
   });
 
-  gulp.task('watch'+subdir, ['watchify'+subdir]);
+  gulp.task('watch-'+subdir, ['watchify'+subdir]);
 
   return 'watch'+subdir;
 }
 
-gulp.task('watch', [
-  makeWatchify('00'),
-  makeWatchify('01'),
-  makeWatchify('02'),
-  makeWatchify('03'),
-  makeWatchify('04'),
-  makeWatchify('05'),
-  makeWatchify('06'),
-  makeWatchify('07'),
-  makeWatchify('08'),
-  makeWatchify('09'),
-  makeWatchify('10'),
-  makeWatchify('11')
-], function () {
+function getDirectories(srcpath) {
+  return fs.readdirSync(srcpath).filter(function(file) {
+    return fs.statSync(path.join(srcpath, file)).isDirectory() && ! file.match(/\.idea|node_modules|public|\.git/);
+  });
+}
+
+gulp.task('watch', getDirectories('./').map(function(d) { return makeWatchify(d) })
+, function () {
   browserSync.init(['./public/*.html','./public/*.css'],{
     notify:true,
     port: 4444,
@@ -71,4 +67,11 @@ gulp.task('watch', [
       scroll: true
     }
   });
+});
+
+gulp.task('default', [], function () {
+  console.log('Usage: gulp watch-[dir]');
+  getDirectories('./').forEach(function (d) {
+    console.log("  gulp watch-" + d);
+  })
 });
