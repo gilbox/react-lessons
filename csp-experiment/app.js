@@ -33,9 +33,14 @@ var appStore = dispatcher.registerStore({
 // actionCreator.js
 var channels = {};
 function openChannel(channelName) {
-  var channel = channels[channelName] || (channels[channelName] = {
+  if (channels[channelName]) return; // already open
+
+  var channel = (channels[channelName] = {
       chan:csp.chan(),
-      chanX:csp.chan()
+      chanX:csp.chan(),
+      complete: function () {
+        csp.putAsync(this.chanX);
+      }
     });
 
   csp.go(function* () {
@@ -46,18 +51,26 @@ function openChannel(channelName) {
   })
 }
 
-function channelPayload(channelName, fn) {
+function channelFn(channelName, fn) {
   csp.putAsync(channels[channelName].chan, fn);
 }
 
-function channelComplete(channelName) {
-  csp.putAsync(channels[channelName].chanX);
+// automatically create the o.fn function by
+// detecting the o#channel_fn function which specifies
+// using the 'channel' channel to process o#fn
+function channelize(o) {
+  Object.keys(o).forEach(function(k) {
+    var m;
+    if (m = k.match(/(.+)__(.+)/)) {
+      openChannel(m[1]);
+      o[m[2]] = function() { channelFn(m[1],  () => o[k](...arguments)) };
+    }
+  });
+  return o;
 }
 
-openChannel('channel');
-
-var actionCreator = dispatcher.registerActionCreator({
-  submitCommentChannel: function (payload) {
+var actionCreator = dispatcher.registerActionCreator(channelize({
+  appChannel__submitComment: function (payload) {
     superagent
       .post('https://community-sentiment.p.mashape.com/text/')
       .send({ txt: payload.comment })
@@ -75,13 +88,18 @@ var actionCreator = dispatcher.registerActionCreator({
           }
         });
 
-        channelComplete('channel');
+        // it's important to call complete() otherwise the channel manager doesn't
+        // know when the next data point can be processed
+        channels.appChannel.complete();
       });
-  },
-  submitComment: function (payload) {
-    channelPayload('channel',  () => this.submitCommentChannel(payload));
   }
-});
+
+  // this method is created automatically in channelize...
+  //
+  //submitComment: function (payload) {
+  //  channelPayload('channel',  () => this.channel__submitComment(payload));
+  //}
+}));
 
 // components/InputWidget.js
 var InputWidget = React.createClass({
