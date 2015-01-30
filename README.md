@@ -11,6 +11,9 @@ Simple to complex react concepts... Wherein we learn React by building a comment
 - Or `gulp watch01`, or `gulp watch02`, etc...
 - Navigate to [http://localhost:4444/public](http://localhost:4444/public)
 
+# Messing around
+
+If `gulp watch` is running, you can open [http://localhost:4444/public](http://localhost:4444/public) and then edit any `app.js` file and the web page will auto-reload whenever you click *save* (so long as syntax errors don't cause compilation to fail).
 
 # Topics Covered
 
@@ -35,3 +38,4 @@ Simple to complex react concepts... Wherein we learn React by building a comment
 
 ### `10` Adding an asyc network request (with `superagent.js`) to the Action Creator
 
+### `11` Spruce things up with classes, placeholder, remove pre-filled comments
