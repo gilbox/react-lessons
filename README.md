@@ -39,3 +39,9 @@ If `gulp watch` is running, you can open [http://localhost:4444/public](http://l
 ### `10` Adding an asyc network request (with `superagent.js`) to the Action Creator
 
 ### `11` Spruce things up with classes, placeholder, remove pre-filled comments
+
+
+## Resources Mentioned during the Talk
+
+- [Using Flux with Angular](medium.com/@gilbox/how-can-react-and-flux-help-us-create-better-stronger-faster-angular-applications-639247898fb)
+- [Find nice free video tutorials on react at egghead.io](http://egghead.io)
